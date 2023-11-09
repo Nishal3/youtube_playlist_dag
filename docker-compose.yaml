@@ -102,6 +102,19 @@ services:
       start_period: 5s
     restart: always
 
+  main_postgres_db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: playlists
+    health_check:
+      test: ["CMD", "pg_isready", "-U", "airflow"]
+      interval: 10s
+      retries: 5
+      start_period: 5s
+    restart: always
+
   redis:
     image: redis:latest
     expose:
