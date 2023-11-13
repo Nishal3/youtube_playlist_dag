@@ -1,7 +1,12 @@
 from airflow.decorators import dag, task
 from airflow import macros
+from airflow.hooks.docker_postgres_hook import DockerPostgresHook
 import logging
 import sys
+
+CONTAINER_NAME = ""
+CONTAINER_DB = "playlists"
+postgres_hook = DockerPostgresHook(CONTAINER_NAME, CONTAINER_DB)
 
 # Basic logging stuff
 logging.basicConfig(
@@ -45,60 +50,43 @@ def play_giver():
 
             return list(data_dict.values())[random_num]
 
-        except Exception as e:
-            logger.error(f"Error: {e}")
+        except Exception as error:
+            logger.error(f"Error: {error}")
             sys.exit(1)
 
     @task
-    def data_loader(song):
-        from sqlalchemy import create_engine, text
+    def data_loader(song: str, hook: DockerPostgresHook):
+        from sqlalchemy import text
         from sqlalchemy.exc import ProgrammingError
-        import socket
 
         try:
-            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            sock.connect(("localhost", 5432))
-        except socket.timeout:
+            conn = hook.get_connection()
+        except TimeoutError:
             logger.error("Error: Connection timed out")
             raise TimeoutError("Connection timed out")
+        except Exception as error:
+            logger.error(f"Error: {error}")
+            raise error
 
         try:
-            engine = create_engine("postgresql://airflow:airflow@5432", future=True)
-            conn = engine.connect()
-            conn.execute(text("commit"))
-            conn.execute(text("create database playlists"))
-            conn.execute(text("create table song_names (id serial, name varchar)"))
-
-        except ProgrammingError as e:
-            logger.error(f"Expected error: {e}")
-
-        except Exception as e:
-            logger.error(f"Error: {e}")
-            raise e
-
-        try:
-            engine = create_engine(
-                "postgresql://airflow:airflow@5432/playlists", future=True
-            )
-            conn = engine.connect()
             conn.execute(text("commit"))
             conn.execute(text("create table song_names (id serial, name varchar)"))
 
-        except ProgrammingError as e:
-            logger.error(f"Expected error: {e}")
+        except ProgrammingError:
+            logger.error(f"Expected error: {ProgrammingError}")
 
-        except Exception as e:
-            logger.error(f"Error: {e}")
+        except Exception as error:
+            logger.error(f"Error: {error}")
             sys.exit(1)
 
         try:
             conn.execute(text(f"INSERT INTO song_names (name) VALUES ({song})"))
 
-        except Exception as e:
-            logger.error(f"error: {e}")
+        except Exception as error:
+            logger.error(f"error: {error}")
             sys.exit(1)
 
-    data_loader(song_fetcher())
+    data_loader(song_fetcher(), postgres_hook)
 
 
 play_giver()
