@@ -1,10 +1,10 @@
 from airflow.decorators import dag, task
 from airflow import macros
-from airflow.hooks.docker_postgres_hook import DockerPostgresHook
+from hooks.docker_postgres_hook import DockerPostgresHook
 import logging
 import sys
 
-CONTAINER_NAME = ""
+CONTAINER_NAME = "random_playlist_giver-main_postgres_db-1"
 CONTAINER_DB = "playlists"
 postgres_hook = DockerPostgresHook(CONTAINER_NAME, CONTAINER_DB)
 
@@ -14,7 +14,9 @@ logging.basicConfig(
 )
 logger = logging.getLogger("playlist_giver_logger")
 file_handler = logging.FileHandler("logs/user_logged/playlist_logger.log")
-file_handler.setFormatter("%(asctime)s\t%(funcName)s\t%(levelname)s\t%(message)s")
+file_handler.setFormatter(
+    logging.Formatter("%(asctime)s\t%(funcName)s\t%(levelname)s\t%(message)s")
+)
 logger.addHandler(file_handler)
 
 default_args = {
