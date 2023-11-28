@@ -4,9 +4,8 @@ from hooks.docker_postgres_hook import DockerPostgresHook
 import logging
 import sys
 
-CONTAINER_NAME = "random_playlist_giver-main_postgres_db-1"
 CONTAINER_DB = "playlists"
-postgres_hook = DockerPostgresHook(CONTAINER_NAME, CONTAINER_DB)
+postgres_hook = DockerPostgresHook(CONTAINER_DB)
 
 # Basic logging stuff
 logging.basicConfig(
@@ -21,9 +20,9 @@ logger.addHandler(file_handler)
 
 default_args = {
     "owner": "Nishal",
-    "start_date": macros.datetime.now(),
+    "start_date": macros.datetime(2023, 11, 26),
     "retries": 1,
-    "retry_delay": macros.timedelta(minutes=5),
+    "retry_delay": macros.timedelta(seconds=5),
 }
 
 
@@ -74,15 +73,15 @@ def play_giver():
             conn.execute(text("commit"))
             conn.execute(text("create table song_names (id serial, name varchar)"))
 
-        except ProgrammingError:
-            logger.error(f"Expected error: {ProgrammingError}")
+        except ProgrammingError as e:
+            logger.error(f"Expected error: {e}")
 
         except Exception as error:
             logger.error(f"Error: {error}")
             sys.exit(1)
 
         try:
-            conn.execute(text(f"INSERT INTO song_names (name) VALUES ({song})"))
+            conn.execute(text(f"INSERT INTO song_names (name) VALUES ('{song}')"))
 
         except Exception as error:
             logger.error(f"error: {error}")

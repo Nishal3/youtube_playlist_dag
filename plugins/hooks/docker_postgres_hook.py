@@ -1,8 +1,6 @@
-import docker
-from sqlalchemy import create_engine
 from airflow.hooks.base import BaseHook
-import socket
 import logging
+import os
 
 # Basic logging stuff
 logging.basicConfig(
@@ -14,14 +12,18 @@ file_handler.setFormatter(
     logging.Formatter("%(asctime)s\t%(funcName)s\t%(levelname)s\t%(message)s")
 )
 logger.addHandler(file_handler)
+POSTGRES_IP_ADDR = os.getenv("MAIN_DB_CONN")
 
 
 class DockerPostgresHook(BaseHook):
-    def __init__(self, postgres_container_name: str, postgres_database: str):
-        self.postgres_container_name = postgres_container_name
+    def __init__(self, postgres_database: str):
+        # self.postgres_container_name = postgres_container_name
         self.postgres_database = postgres_database
 
     def get_connection(self):
+        from sqlalchemy import create_engine, text
+        from sqlalchemy.exc import ProgrammingError
+
         # logger.info("Before `docker_client` is initialized")
         # docker_client = docker.from_env()
         # logger.info(f"Created `docker_client` variable: {docker_client=}")
@@ -32,20 +34,22 @@ class DockerPostgresHook(BaseHook):
         # ][0]["Address"]
         # self.postgres_ip_addr = postgres_ip_addr
 
-        postgres_ip_addr = "172.9.0.4"
+        # try:
+        #     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        #     sock.connect((POSTGRES_IP_ADDR, 5432))
+        # except socket.timeout:
+        #     raise TimeoutError("Connection timed out")
 
-        logger.info("Going into socket testing")
-
-        try:
-            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            sock.connect((postgres_ip_addr, 5432))
-        except socket.timeout:
-            raise TimeoutError("Connection timed out")
+        logger.info(f"ip address: {POSTGRES_IP_ADDR}")
 
         engine = create_engine(
-            f"postgresql://airflow:airflow@{postgres_ip_addr}:5432/{self.postgres_database}",
+            POSTGRES_IP_ADDR,
             future=True,
         )
+        logger.info("Created Engine")
 
         conn = engine.connect()
+
+        logger.info("Created Connection")
+
         return conn

@@ -154,6 +154,7 @@ cython_debug/
 
 # User testing file
 test.py
+backup_sript.sh
 
 # PyCharm
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
