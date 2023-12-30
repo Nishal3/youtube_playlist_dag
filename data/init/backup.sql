@@ -77,6 +77,37 @@ COPY public.song_names (id, name) FROM stdin;
 9	Ketamine Entity (Axiom Mix)
 10	Ljones - Soul Below
 11	Nujabes - Kujaku (Samurai Champloo OST) . Track 04
+12	vice versa
+13	LJones - July
+14	Sky Diver
+15	Re-echo
+16	Beleza Pula
+17	東海道メガロポリス
+18	Star Wars Samba
+19	Spike Spiegel
+20	70s Japanese Jazz Mix (Jazz-funk, Soul Jazz, Rare groove, Drum Breaks..)
+21	on
+22	dessert
+23	Nujabes/Fat Jon - Funkin (Samurai Champloo OST)
+24	You & Explosion Band / FULL COURSE /  As You Like It
+25	sonrisa
+26	Intense - Natural Progression
+27	Hubble
+28	Circles (7'' Edit)
+29	Cafe
+30	Samurai Champloo - Here and there
+31	Nujabes - The Space Between Two World
+32	Gone Are The Days
+33	まちぶせ
+34	code
+35	Elapse
+36	Intense - Positive Notions
+37	299ml (gu-nu)
+38	Tortoise
+39	Pinecones
+40	sonrisa
+41	Ljones - Introductions
+42	Conoid Tone
 \.
 
 
@@ -84,7 +115,7 @@ COPY public.song_names (id, name) FROM stdin;
 -- Name: song_names_id_seq; Type: SEQUENCE SET; Schema: public; Owner: airflow
 --
 
-SELECT pg_catalog.setval('public.song_names_id_seq', 11, true);
+SELECT pg_catalog.setval('public.song_names_id_seq', 42, true);
 
 
 --

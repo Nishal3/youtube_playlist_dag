@@ -154,7 +154,12 @@ cython_debug/
 
 # User testing file
 test.py
+
+# Saved backup script to run, will be included in README
 backup_sript.sh
+
+# Log file
+logs/
 
 # PyCharm
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can

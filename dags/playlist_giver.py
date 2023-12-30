@@ -11,8 +11,8 @@ postgres_hook = DockerPostgresHook(CONTAINER_DB)
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s\t%(funcName)s\t%(levelname)s\t%(message)s"
 )
-logger = logging.getLogger("playlist_giver_logger")
-file_handler = logging.FileHandler("logs/user_logged/playlist_logger.log")
+logger = logging.getLogger("old_playlist_giver_logger")
+file_handler = logging.FileHandler("logs/user_logged/old_playlist_logger.log")
 file_handler.setFormatter(
     logging.Formatter("%(asctime)s\t%(funcName)s\t%(levelname)s\t%(message)s")
 )
@@ -26,7 +26,12 @@ default_args = {
 }
 
 
-@dag("playlist_giver", schedule="*/5 * * * *", catchup=False, default_args=default_args)
+@dag(
+    "old_playlist_giver",
+    schedule="*/1 * * * *",
+    catchup=False,
+    default_args=default_args,
+)
 def play_giver():
     @task
     def song_fetcher():
@@ -35,12 +40,15 @@ def play_giver():
 
         try:
             data_dict = {}
-            with open("data/playlist_titles.csv", "r") as file:
+            num = 0
+            with open("data/old_playlist_titles.csv", "r") as file:
                 file_data = csv.reader(file, delimiter="U")
                 for i in file_data:
                     i.pop()
-                    output = "U".join(i)
-                    data_dict[file_data.line_num] = output[0 : output.find(" --")]
+                    output = "U".join(i).replace("'", "''")
+                    data_dict[file_data.line_num] = output[
+                        0 : output.find(" --")
+                    ].replace("'", "''")
 
             logger.info("Read Data File; Has Dictionary")
 
@@ -71,7 +79,9 @@ def play_giver():
 
         try:
             conn.execute(text("commit"))
-            conn.execute(text("create table song_names (id serial, name varchar)"))
+            conn.execute(
+                text("create table if not exists song_names (id serial, name varchar)")
+            )
 
         except ProgrammingError as e:
             logger.error(f"Expected error: {e}")
@@ -82,6 +92,7 @@ def play_giver():
 
         try:
             conn.execute(text(f"INSERT INTO song_names (name) VALUES ('{song}')"))
+            logger.info(f"INSERT INTO song_names (name) VALUES ('{song}')")
 
         except Exception as error:
             logger.error(f"error: {error}")

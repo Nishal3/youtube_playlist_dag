@@ -16,8 +16,7 @@ POSTGRES_IP_ADDR = os.getenv("MAIN_DB_CONN")
 
 
 class DockerPostgresHook(BaseHook):
-    def __init__(self, postgres_database: str):
-        # self.postgres_container_name = postgres_container_name
+    def __init__(self, postgres_database):
         self.postgres_database = postgres_database
 
     def get_connection(self):
@@ -40,10 +39,10 @@ class DockerPostgresHook(BaseHook):
         # except socket.timeout:
         #     raise TimeoutError("Connection timed out")
 
-        logger.info(f"ip address: {POSTGRES_IP_ADDR}")
+        logger.info(f"ip address: {POSTGRES_IP_ADDR + self.postgres_database}")
 
         engine = create_engine(
-            POSTGRES_IP_ADDR,
+            POSTGRES_IP_ADDR + self.postgres_database,
             future=True,
         )
         logger.info("Created Engine")
