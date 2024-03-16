@@ -1,16 +1,7 @@
-# Airflow Dependencies
 from airflow.decorators import dag, task
 from airflow import macros
-
-# Custom Airflow hook
 from hooks.docker_postgres_hook import DockerPostgresHook
-
-# Logging
 import logging
-
-# Typing
-from typing import List
-
 import sys
 
 CONTAINER_DB = "playlists"
@@ -20,8 +11,8 @@ postgres_hook = DockerPostgresHook(CONTAINER_DB)
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s\t%(funcName)s\t%(levelname)s\t%(message)s"
 )
-logger = logging.getLogger("playlist_giver_logger")
-file_handler = logging.FileHandler("logs/user_logged/playlist_logger.log")
+logger = logging.getLogger("old_playlist_giver_logger")
+file_handler = logging.FileHandler("logs/user_logged/old_playlist_logger.log")
 file_handler.setFormatter(
     logging.Formatter("%(asctime)s\t%(funcName)s\t%(levelname)s\t%(message)s")
 )
@@ -36,43 +27,44 @@ default_args = {
 
 
 @dag(
-    "playlist_giver",
+    "old_playlist_giver",
     schedule="*/1 * * * *",
     catchup=False,
     default_args=default_args,
 )
 def play_giver():
     @task
-    def song_fetcher() -> List[str]:
+    def song_fetcher():
         import csv
         import random
 
         try:
-            data_list = []
+            data_dict = {}
             num = 0
-            with open("data/playlist_titles.csv", "r") as file:
-                file_data = csv.reader(file, delimiter="\t")
-                for line in file_data:
-                    # Weird string changes for each line because joining later causes problems otherwise
-                    for val_index in range(len(line)):
-                        line[val_index] = f"'{line[val_index]}'"
-                    data_list.append(line)
+            with open("data/old_playlist_titles.csv", "r") as file:
+                file_data = csv.reader(file, delimiter="U")
+                for i in file_data:
+                    i.pop()
+                    output = "U".join(i).replace("'", "''")
+                    data_dict[file_data.line_num] = output[
+                        0 : output.find(" --")
+                    ].replace("'", "''")
 
-            logger.info("Read Data File; Has List")
+            logger.info("Read Data File; Has Dictionary")
 
-            len_of_data = len(data_list)
+            len_of_data = max(data_dict.keys())
             random_num = random.randint(0, len_of_data - 1)
 
             logger.info("Generated Random Song")
 
-            return data_list[random_num]
+            return list(data_dict.values())[random_num]
 
         except Exception as error:
             logger.error(f"Error: {error}")
             sys.exit(1)
 
     @task
-    def data_loader(song_list: List[str], hook: DockerPostgresHook):
+    def data_loader(song: str, hook: DockerPostgresHook):
         from sqlalchemy import text
         from sqlalchemy.exc import ProgrammingError
 
@@ -88,9 +80,7 @@ def play_giver():
         try:
             conn.execute(text("commit"))
             conn.execute(
-                text(
-                    "create table if not exists songs (id serial, name varchar(255), channel_id varchar(26), channel_name varchar(255))"
-                )
+                text("create table if not exists song_names (id serial, name varchar)")
             )
 
         except ProgrammingError as e:
@@ -101,15 +91,8 @@ def play_giver():
             sys.exit(1)
 
         try:
-            insertions = ", ".join(song_list)
-            conn.execute(
-                text(
-                    f"INSERT INTO songs (name, channel_id, channel_name) VALUES ({insertions})"
-                )
-            )
-            logger.info(
-                f"INSERT INTO songs (name, channel_id, channel_name) VALUES ({insertions})"
-            )
+            conn.execute(text(f"INSERT INTO song_names (name) VALUES ('{song}')"))
+            logger.info(f"INSERT INTO song_names (name) VALUES ('{song}')")
 
         except Exception as error:
             logger.error(f"error: {error}")
