@@ -9,6 +9,9 @@
 * [ Airflow Icon ][airflow_icon]
 * [ Database Icon ][database_icon]
 
+<!-- Images Used -->
+[data_pipeline_visual]: https://raw.githubusercontent.com/Nishal3/youtube_playlist_dag/assets/Youtube_Playlist_DAG.png "Final Pipeline Visual"
+
 <!-- Cited Works - Links -->
 
 [docker_ship]: https://commons.wikimedia.org/wiki/File:Docker-svgrepo-com.svg "Docker Ship"
