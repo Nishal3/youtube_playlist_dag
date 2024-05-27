@@ -1,9 +1,20 @@
 from time import time
 from pytube import YouTube, Playlist, Channel
 from concurrent.futures import ThreadPoolExecutor, as_completed
+import os
+import sys
 
-playlist_link = "https://youtube.com/playlist?list=PL7gIQsd6srbZorq6CmfZr_wTf_ONPantw&si=x5YU67UFmHbacC0M"
-video_links = Playlist(playlist_link).video_urls
+PLAYLIST_LINK = str(os.getenv("playlist_link"))
+if not PLAYLIST_LINK:
+    print("Error: Please enter a valid link")
+    sys.exit(1)
+
+video_links = Playlist(PLAYLIST_LINK).video_urls
+if not video_links:
+    print(
+        "Error: Playlist link is either invalid or private, please re-run with a valid link or make the proper adjustments"
+    )
+    sys.exit(1)
 start = time()
 
 
@@ -29,12 +40,11 @@ with ThreadPoolExecutor(max_workers=10) as executor:
 video_titles = []
 for task in as_completed(processes):
     video_titles.append(task.result())
-    print(task.result())
 
 
-print(f"Time taken: {time() - start}")
+print(f"Time taken: {round(time() - start, 2)} seconds")
 # Output
-with open("playlist_titles.txt", "w") as file:
+with open("data/playlist_titles.csv", "w") as file:
     file.write("name\tchannel_id\tchannel_name\n")
     for i in video_titles:
         file.write(i + "\n")
