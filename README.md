@@ -1,5 +1,7 @@
-# youtube_playlist_dag
+# Youtube Playlist DAG
 
+## Pipeline Visual
+![data_pipeline_visual]
 
 
 
