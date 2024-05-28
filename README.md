@@ -76,7 +76,7 @@ The username and password are both 'airflow'. After clicking 'Sign In' you shoul
 ​  
 The screen should look something like this:
 ![airflow_dags_page]  
-​  
+
 ### Starting the DAGs
 There are two DAGs you can choose from: one that loads all of the videos to the database at once and one that slowly populates the database with randomly selected videos.  
 
