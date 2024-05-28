@@ -21,6 +21,8 @@
 
 * Create a `.env` file and add the line `AIRFLOW_UID=1000`
 
+* Create a `backup` folder in the `data` directory by running `mkdir data/backup` if not already present
+
 Docker compose handles the rest, so that's it for requirements!
 
 ## Usage
@@ -73,10 +75,9 @@ You should now see a screen like this:
 ![airflow_webserver_landing]
 
 The username and password are both 'airflow'. After clicking 'Sign In' you should see the DAGs.  
-​  
+​
 The screen should look something like this:
-![airflow_dags_page]  
-
+![airflow_dags_page]  
 ### Starting the DAGs
 There are two DAGs you can choose from: one that loads all of the videos to the database at once and one that slowly populates the database with randomly selected videos.  
 
