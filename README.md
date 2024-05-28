@@ -151,7 +151,6 @@ Thank you for taking the time to read this, and have a great day!
 * [ Network Logo ][network_logo]
 * [ Airflow Icon ][airflow_icon]
 * [ Database Icon ][database_icon]
-* [ Airflow Docker Compose File ][airflow_docker_compose]
 
 <!-- HyperLinks -->
 [docker_installation]: https://docs.docker.com/engine/install/ "Docker Installation"
@@ -178,5 +177,3 @@ Thank you for taking the time to read this, and have a great day!
 [airflow_icon]: https://commons.wikimedia.org/wiki/File:AirflowLogo.png "Airflow Icon"
 
 [database_icon]: https://iconduck.com/icons/21839/database# "Database Icon"
-
-[airflow_docker_compose]: https://www.apache.org/licenses/LICENSE-2.0 "Airflow Docker Compose"
