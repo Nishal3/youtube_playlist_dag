@@ -158,6 +158,9 @@ test.py
 # Saved backup script to run, will be included in README
 backup_sript.sh
 
+# Backup for database since it auto-populates
+backup.sql
+
 # Log file
 logs/
 logs/*

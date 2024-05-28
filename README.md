@@ -17,10 +17,10 @@
 
 * Click the green "Code" dropdown and download the zip. Unzip the repo in an empty folder, and that's it!
 
-Docker-compose handles the rest, so that's it for requirements!
+docker compose handles the rest, so that's it for requirements!
 
 ## Usage
-Start with `docker-compose up airflow-init` for initializing the airflow client. Then run `docker-compose up` to run all of the containers.
+Start with `docker compose up airflow-init` for initializing the airflow client. Then run `docker-compose up` to run all of the containers.
 
 Open the airflow webserver at your public IP address colon 8080, for example: `127.0.0.1:8080`. If you're using your machine, you can also do `localhost:8080`.
 
@@ -50,11 +50,11 @@ Give this some time. It might take a few seconds to finish.  
 ### Running the Docker Containers
 To start the docker containers, first run the initialization:
 ``` bash
-docker-compose up airflow-init
+docker compose up airflow-init
 ```  
 After that finishes initializing, you compose up all the containers by running:
 ``` bash
-docker-compose up
+docker compose up
 ```
 ### Getting to the Webserver
 Once the Docker containers are up, we can access the Airflow webserver to start these DAGs.
@@ -114,12 +114,16 @@ docker exec -it <YOUR_FOLDER_NAME>-main_postgres_db-1 bash
 
 Then we need to run the backup for the playlists database:
 ``` bash
-pg_dump -U airflow playlists > docker-entrypoint-initdb.d/backup.sql
+pg_dump -U airflow playlists > docker-entrypoint-backupdb.d/backup.sql
 ```
 
 The backed-up data is present in the file `data/init/backup.sql`
 
-### Using Backup to Populate the Songs Table
+### Using Backup to Populate the Database
+#### Option 1
+Move the file `backup.sql` to the `init/` folder. This will make it so the `backup.sql` script is run on the databases start-up.
+
+#### Option 2
 Before starting the DAG, go into the docker container that houses the database, same as before:
 ``` bash
 docker exec -it <YOUR_FILE_NAME>-main_postgres_db-1 bash
@@ -127,13 +131,14 @@ docker exec -it <YOUR_FILE_NAME>-main_postgres_db-1 bash
 
 Then run the command that uses the backup in the docker container:
 ``` bash
-psql -U airflow playlists < docker-entrypoint-initdb.d/backup.sql
+psql -U airflow playlists < docker-entrypoint-backupdb.d/backup.sql
 ```
+
 
 ## Closing
 I hope this project can be handy! I know YouTube does not show what videos become unavailable, so using this might make finding those pesky videos easier. That was why I thought of this project.  
 
-I have learned truckloads of information about docker, docker-compose, and networking with docker containers with this project. Alongside getting more knowledge about airflow and hooks, I had fun and used this to store all the songs I have in my playlist.
+I have learned truckloads of information about docker, docker compose, and networking with docker containers with this project. Alongside getting more knowledge about airflow and hooks, I had fun and used this to store all the songs I have in my playlist.
 
 The functionality of this project is not great, but it will make finding unavailable videos easier because this script only gets available videos. If the song is not in the database with all the songs fetched, it is an unavailable video.
 
@@ -146,6 +151,7 @@ Thank you for taking the time to read this, and have a great day!
 * [ Network Logo ][network_logo]
 * [ Airflow Icon ][airflow_icon]
 * [ Database Icon ][database_icon]
+* [ Airflow Docker Compose File ][airflow_docker_compose]
 
 <!-- HyperLinks -->
 [docker_installation]: https://docs.docker.com/engine/install/ "Docker Installation"
@@ -172,3 +178,5 @@ Thank you for taking the time to read this, and have a great day!
 [airflow_icon]: https://commons.wikimedia.org/wiki/File:AirflowLogo.png "Airflow Icon"
 
 [database_icon]: https://iconduck.com/icons/21839/database# "Database Icon"
+
+[airflow_docker_compose]: https://www.apache.org/licenses/LICENSE-2.0 "Airflow Docker Compose"

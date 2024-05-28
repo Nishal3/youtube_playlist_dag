@@ -1,1 +1,1 @@
-CREATE DATABASE playlists;
+-- Blank
