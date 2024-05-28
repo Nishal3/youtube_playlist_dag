@@ -12,12 +12,16 @@
 ### Docker
 * [ Docker and Docker Compose installed ][docker_installation]
 
-### Clone Repo to Your Machine of Choice
+### Clone Repo to Your Machine of Choice and Set it up
 * Make sure the machine you plan to use has at least 16GB of memory, or else things might get SLOW!
 
 * Click the green "Code" dropdown and download the zip. Unzip the repo in an empty folder, and that's it!
 
-docker compose handles the rest, so that's it for requirements!
+* Create a `user_logged/` folder in the logs directory by running `mkdir logs/user_logged/`
+
+* Create a `.env` file and add the line `AIRFLOW_UID=1000`
+
+Docker compose handles the rest, so that's it for requirements!
 
 ## Usage
 Start with `docker compose up airflow-init` for initializing the airflow client. Then run `docker-compose up` to run all of the containers.
@@ -72,8 +76,8 @@ The username and password are both 'airflow'. After clicking 'Sign In' you shoul
 ​  
 The screen should look something like this:
 ![airflow_dags_page]  
-
-
+​  
+​  
 ### Starting the DAGs
 There are two DAGs you can choose from: one that loads all of the videos to the database at once and one that slowly populates the database with randomly selected videos.  
 
@@ -95,7 +99,7 @@ docker exec -it <YOUR_FOLDER_NAME>-main_postgres_db-1 bash
 # If my folder name is youtube_playlist_giver, the container name would be youtube_playlist_giver-main_postgres_db-1
 ```
 
-You should now be in the docker container. The prompt should be different. It should now be `root@c9be136ef633:/#` or something similar before the input.  
+You should now be in the docker container. The prompt should be different, now being `root@c9be136ef633:/#` or something similar before the input.  
 
 To get the data, we need to get into the `playlist` database that's inside this container. For this, we can run:
 ``` bash
@@ -134,6 +138,12 @@ Then run the command that uses the backup in the docker container:
 psql -U airflow playlists < docker-entrypoint-backupdb.d/backup.sql
 ```
 
+## Logging
+I made my own logging system since I got frustrated reading the airflow logs. This makes error comprehension 10x faster.
+
+If anything goes awry, check the `logs/user_logged/FILE` with the file being the DAG you're having errors with. If there is an error, chances are, it logged it and will show you exactly where the error happened.
+
+Let's hope there are no errors, but you never know what'll happen!
 
 ## Closing
 I hope this project can be handy! I know YouTube does not show what videos become unavailable, so using this might make finding those pesky videos easier. That was why I thought of this project.  
