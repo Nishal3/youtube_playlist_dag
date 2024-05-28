@@ -15,7 +15,7 @@
 ### Clone Repo to Your Machine of Choice
 * Make sure the machine you plan to use has at least 16GB of memory or else things might get SLOW!
 
-* Click the green "Code" dropdown and download the zip. Unzip the repo where yout want to store it, and that's it!
+* Click the green "Code" dropdown and download the zip. Unzip the repo in a empty folder, and that's it!
 
 That's it for requirements! Everything else will be handled by our docker compose file.
 
@@ -50,7 +50,10 @@ docker compose up
 ### Starting the DAG of choice
 There are two DAGs to choose from, one that loads all of the songs to the database at once and one that slowly populates the database with randomly selected songs.  
 ​  
-Once the Docker containers are all up and running, we can access the Airflow webserver. 
+Once the Docker containers are all up and running, we can access the Airflow webserver to start these DAGs.
+
+* If you run this code on your local machine, go to the URL `localhost:8080`
+* If you downloaded this repository from a virtual machine, make sure you allow your IP or make public the port 8080 so you can access this. Then go to the URL `PUBLIC_IP:8080`
 
 ## Resources Used:
 * [ Docker SVG ][docker_ship]
