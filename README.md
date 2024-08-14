@@ -7,10 +7,10 @@
 
 ### Python
 * Version: 3.2+
-* PyTube library installed (`pip install pytube`)
+* pytube library installed (`pip install pytube`)
 
 ### Docker
-* [ Docker and Docker Compose installed ][docker_installation]
+* [ Docker Engine and Docker Compose installed ][docker_installation]
 
 ### Clone Repo to Your Machine of Choice and Set it up
 * Make sure the machine you plan to use has at least 16GB of memory, or else things might get SLOW!
@@ -57,7 +57,7 @@ Give this some time. It might take a few seconds to finish.  
 To start the docker containers, first run the initialization:
 ``` bash
 docker compose up airflow-init
-```  
+```
 After that finishes initializing, you compose up all the containers by running:
 ``` bash
 docker compose up
@@ -89,7 +89,7 @@ Here are the visual steps:  
 1. Click your chosen DAG:  
 ![airflow_click_dag]
 
-2. Unpause DAG or Trigger it:
+2. Unpause or Trigger DAG:
 ![airflow_unpause_dag]
 
 ## Viewing Data Flow to Database
@@ -104,7 +104,7 @@ You should now be in the docker container. The prompt should be different, now b
 To get the data, we need to get into the `playlist` database that's inside this container. For this, we can run:
 ``` bash
 psql -U airflow playlists
-```  
+```
 
 The prompt changes again and becomes `airflow=#` indicating that we are now inside the database. If we list the tables running the command `\dt`, we will see our `songs` table.
 
@@ -139,7 +139,7 @@ psql -U airflow playlists < docker-entrypoint-backupdb.d/backup.sql
 ```
 
 ## Logging
-I made my own logging system since I got frustrated reading the airflow logs. This makes error comprehension 10x faster.
+I made my own logging system since I had trouble understanding the Airflow logs. This made error comprehension 10x faster.
 
 If anything goes awry, check the `logs/user_logged/FILE` with the file being the DAG you're having errors with. If there is an error, chances are, it logged it and will show you exactly where the error happened.
 
